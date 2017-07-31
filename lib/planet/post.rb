@@ -3,13 +3,16 @@ require 'mustache'
 
 class Planet::Post
 
-  attr_accessor :title, :content, :date, :url, :blog, :rss_data
+  attr_accessor :title, :content, :tags, :date, :url, :publication_url, :image, :blog, :rss_data
 
   def initialize(attributes = {})
     self.title      = attributes[:title]
     self.content    = attributes[:content]
+    self.tags = attributes[:tags]
     self.date       = attributes[:date]
     self.url        = attributes[:url]
+    self.publication_url        = attributes[:publication_url]
+    self.image        = attributes[:image]
     self.blog       = attributes[:blog]
     self.rss_data   = attributes[:rss_data]
   end
@@ -30,7 +33,10 @@ class Planet::Post
       blog_slug: self.blog.name.to_url(:limit => 50, :truncate_words => true),
       blog_categories: self.blog.categories,
       blog_tags: self.blog.tags,
+      post_publication_url: self.publication_url,
       post_url: self.url,
+      post_tags: self.tags,
+      image: self.image,
       twitter: self.blog.twitter,
       twitter_url: self.blog.twitter.to_s == '' ? '' : "http://twitter.com/#{ self.blog.twitter }",
       post_rss_data: self.rss_data,
