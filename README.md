@@ -1,5 +1,8 @@
 # Planet.rb
 
+## Customisations
+Thanks to [ryanakca](https://github.com/ryanakca) for this awesome Gem, this fork contains customisations to suit the workflow for [gregariousmammal.com](http://gregariousmammal.com).
+
 ## Important!
 
 This IS a work in progress, although most functionality is already implemented, do not expect much stability, and of course patches are appreciated. :)
