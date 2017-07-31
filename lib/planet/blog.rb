@@ -1,6 +1,8 @@
 require 'reverse_markdown'
 require 'planet/post'
 require 'planet/parsers'
+require 'nokogiri'
+require 'open-uri'
 
 class Planet
   class Blog
@@ -64,19 +66,26 @@ class Planet
         next unless whitelisted?(entry)
         content = if entry.content
                     self.sanitize_images(entry.content.strip)
-                  elsif entry.summary
-                    self.sanitize_images(entry.summary.strip)
                   else
                     abort "=> No content found on entry"
                   end
+        doc = Nokogiri::HTML(content)
+        first_image = doc.xpath('//img').first
+        download = open(first_image.attr('src'))
+        IO.copy_stream(download, "images/#{download.base_uri.to_s.split('/')[-1]}")
 
-        content = ReverseMarkdown.convert(content, unknown_tags: :bypass)
+        strip_content = Nokogiri::XML.fragment(content).css('p').first.text
+        strip_content = ReverseMarkdown.convert(strip_content, unknown_tags: :bypass)
 
         self.posts << @post = Post.new(
           title: entry.title.nil? ? self.name : entry.title,
-          content: content,
+          content: strip_content,
+          # TODO: better way?
+          tags: entry.categories.join("\n  - ").prepend("\n  - "),
           date: entry.published,
           url: entry.url,
+          publication_url: entry.url,
+          image: "#{download.base_uri.to_s.split('/')[-1]}",
           blog: self,
           rss_data: entry
         )
