@@ -5,3 +5,6 @@ planet.yml
 *.gempsec
 .gs
 .bundle/
+.idea
+.ruby-version
+Gemfile.lock
