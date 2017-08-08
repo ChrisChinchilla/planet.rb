@@ -37,6 +37,7 @@ class Planet::Parsers
 
   # returns the appropiate parser based on the type
   def get_parser(type)
+    puts("gp" + type)
     begin
       return @types.fetch(type)
     rescue KeyError => e
@@ -48,8 +49,11 @@ class Planet::Parsers
   # defaults to Feedjira if none available.
   def get_parser_for(feed)
     feed_domain = URI(feed).host
-
+    puts ("gpf" + feed_domain)
+    puts(@domains)
     @domains.each do |domain, parser|
+      puts ("gpf1" + domain)
+      puts ("gpf2" + parser)
       return parser if feed_domain.end_with? domain
     end
 

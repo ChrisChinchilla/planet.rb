@@ -44,6 +44,7 @@ class Planet
 
     def fetch
       # given parser can be set arbitrarily with :type or inferred from the domain
+
       parser = self.type ? @parsers.get_parser(self.type) : @parsers.get_parser_for(self.feed)
 
       # parser instances should mimick Feedzirra interface
@@ -70,9 +71,13 @@ class Planet
                     abort "=> No content found on entry"
                   end
         doc = Nokogiri::HTML(content)
+
         first_image = doc.xpath('//img').first
-        download = open(first_image.attr('src'))
-        IO.copy_stream(download, "images/#{download.base_uri.to_s.split('/')[-1]}")
+        download_url = open(first_image.attr('src'))
+        file_dest = "images/#{download_url.base_uri.to_s.split('/')[-1]}"
+        File.open(file_dest, 'wb') do |fo|
+          fo.write open(download_url).read
+        end
 
         strip_content = Nokogiri::XML.fragment(content).css('p').first.text
         strip_content = ReverseMarkdown.convert(strip_content, unknown_tags: :bypass)
@@ -85,7 +90,7 @@ class Planet
           date: entry.published,
           url: entry.url,
           publication_url: entry.url,
-          image: "#{download.base_uri.to_s.split('/')[-1]}",
+          image: "#{download_url.base_uri.to_s.split('/')[-1]}",
           blog: self,
           rss_data: entry
         )
