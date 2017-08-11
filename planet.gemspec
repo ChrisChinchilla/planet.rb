@@ -18,7 +18,7 @@ spec = Gem::Specification.new do |s|
   s.bindir = 'bin'
   s.executables << 'planet'
   s.add_runtime_dependency 'gli',       '~> 2.12',  '>= 2.12.0'
-  s.add_runtime_dependency 'feedjira',  '~> 1.3',   '>= 1.3.1'
+  s.add_runtime_dependency 'feedjira',  '~> 2.1.2',   '>= 2.1.2'
   s.add_runtime_dependency 'mustache',  '~> 0.99',  '>= 0.99.6'
   s.add_runtime_dependency 'box',       '~> 0.1',   '>= 0.1.1'
   s.add_runtime_dependency 'stringex',  '~> 2.5',   '>= 2.5.2'

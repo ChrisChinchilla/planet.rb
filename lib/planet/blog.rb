@@ -4,6 +4,9 @@ require 'planet/parsers'
 require 'nokogiri'
 require 'open-uri'
 
+OpenURI::Buffer.send :remove_const, 'StringMax'
+OpenURI::Buffer.const_set 'StringMax', 0
+
 class Planet
   class Blog
 
@@ -46,11 +49,13 @@ class Planet
       # given parser can be set arbitrarily with :type or inferred from the domain
 
       parser = self.type ? @parsers.get_parser(self.type) : @parsers.get_parser_for(self.feed)
-
       # parser instances should mimick Feedzirra interface
-      parser.fetch_and_parse(self.feed,
-                            :on_success => lambda { |url, feed| on_fetch_success(feed) },
-                            :on_failure => lambda { |url, response| puts "\t=> Failed to fetch #{url.inspect} the server returned: #{response}" })
+      # parser.fetch_and_parse(self.feed,
+      #                       :on_success => lambda { |url, feed| on_fetch_success(feed) },
+      #                       :on_failure => lambda { |url, response| puts "\t=> Failed to fetch #{url.inspect} the server returned: #{response}" })
+      # TODO: Error handle as above
+      feed = Feedjira::Feed.fetch_and_parse self.feed
+      on_fetch_success(feed)
     end
 
     def on_fetch_success(feed)
@@ -73,8 +78,11 @@ class Planet
         doc = Nokogiri::HTML(content)
 
         first_image = doc.xpath('//img').first
+        puts(first_image)
         download_url = open(first_image.attr('src'))
+        puts(download_url.inspect)
         file_dest = "images/#{download_url.base_uri.to_s.split('/')[-1]}"
+        puts(file_dest)
         File.open(file_dest, 'wb') do |fo|
           fo.write open(download_url).read
         end
